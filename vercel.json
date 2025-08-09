@@ -3,13 +3,7 @@
   "builds": [
     {
       "src": "metacard/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": [
-          "metacard/fonts/Poppins-Bold.ttf",
-          "metacard/fonts/Poppins-Regular.ttf"
-        ]
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
