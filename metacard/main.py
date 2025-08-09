@@ -19,3 +19,13 @@ async def generate_thumbnail_endpoint(title: str = "Hello from my API!"):
     
     # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png")
+
+
+@app.get("/")
+async def root():
+    """
+    Root endpoint that returns the favicon.ico image.
+    """
+    with open("favicon.ico", "rb") as f:
+        favicon_bytes = f.read()
+    return StreamingResponse(io.BytesIO(favicon_bytes), media_type="image/x-icon")
