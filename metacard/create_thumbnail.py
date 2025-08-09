@@ -9,6 +9,15 @@ AUTHOR_NAME = "Serhii Hrekov" # Your name!
 AUTHOR_WEBSITE = "hrekov.com" # Your website URL
 BASE_DIR = Path(__file__).resolve().parent
 
+
+try:
+    TITLE_FONT = load_font("fonts/Poppins/Poppins-Bold.ttf", 60)
+    AUTHOR_FONT = load_font("fonts/Poppins/Poppins-Regular.ttf", 40)
+    AUTHOR_URL_FONT = load_font("fonts/Poppins/Poppins-Regular.ttf", 20)
+except IOError:
+    print("Font file not found. Please download Poppins from Google Fonts.")
+    
+
 def load_font(path, size):
     try:
         return ImageFont.truetype(str(BASE_DIR / path), size)
@@ -25,13 +34,7 @@ def generate_image(title: str):
 
     # 2. Load fonts
     # Make sure you have these .ttf font files in the same directory
-    try:
-        title_font = load_font("fonts/Poppins/Poppins-Bold.ttf", 60)
-        author_font = load_font("fonts/Poppins/Poppins-Regular.ttf", 40)
-        author_url_font = load_font("fonts/Poppins/Poppins-Regular.ttf", 20)
-    except IOError:
-        print("Font file not found. Please download Poppins from Google Fonts.")
-        return
+
 
     # 3. Simple text wrapping for the title
     # This is a basic implementation to handle longer titles
@@ -56,15 +59,15 @@ def generate_image(title: str):
 
     # Draw title lines
     for line in lines:
-        draw.text((IMG_WIDTH / 2, current_y), line, font=title_font, fill="#FFFFFF", anchor="ms")
+        draw.text((IMG_WIDTH / 2, current_y), line, font=TITLE_FONT, fill="#FFFFFF", anchor="ms")
         current_y += 70 # Move to the next line
 
     # Draw author name
     current_y += 20 # Add a little space before the author
-    draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=author_font, fill="#cccccc", anchor="ms")
+    draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=AUTHOR_FONT, fill="#cccccc", anchor="ms")
     # Draw author domain
     current_y += 40 # Add a little space before the author
-    draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=author_url_font, fill="#cccccc", anchor="ms")
+    draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=AUTHOR_URL_FONT, fill="#cccccc", anchor="ms")
 
     # 5. Save the image
     # img.save(output_path)
