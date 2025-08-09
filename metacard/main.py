@@ -4,7 +4,7 @@ from fastapi.responses import StreamingResponse
 import io
 
 # Import our generator function from the other file
-import create_thumbnail
+from . import create_thumbnail
 
 app = FastAPI()
 
