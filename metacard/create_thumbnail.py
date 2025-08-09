@@ -1,12 +1,13 @@
 from PIL import Image, ImageDraw, ImageFont
-
+import io 
 # --- Configuration ---
 IMG_WIDTH = 1200
 IMG_HEIGHT = 630
 BG_COLOR = "#1a1a1a" # A dark background color
 AUTHOR_NAME = "Serhii Hrekov" # Your name!
+AUTHOR_WEBSITE = "hrekov.com" # Your website URL
 
-def generate_image(title: str, output_path: str):
+def generate_image(title: str):
     """
     Generates a social media thumbnail for a blog post.
     """
@@ -19,6 +20,8 @@ def generate_image(title: str, output_path: str):
     try:
         title_font = ImageFont.truetype("fonts/Poppins/Poppins-Bold.ttf", 60)
         author_font = ImageFont.truetype("fonts/Poppins/Poppins-Regular.ttf", 40)
+        author_url_font = ImageFont.truetype("fonts/Poppins/Poppins-Regular.ttf", 20)
+
     except IOError:
         print("Font file not found. Please download Poppins from Google Fonts.")
         return
@@ -52,11 +55,20 @@ def generate_image(title: str, output_path: str):
     # Draw author name
     current_y += 20 # Add a little space before the author
     draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=author_font, fill="#cccccc", anchor="ms")
-    
-    # 5. Save the image
-    img.save(output_path)
-    print(f"Image saved to {output_path}")
+    # Draw author domain
+    current_y += 40 # Add a little space before the author
+    draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=author_url_font, fill="#cccccc", anchor="ms")
 
+    # 5. Save the image
+    # img.save(output_path)
+    # print(f"Image saved to {output_path}")
+
+     # 5. Save the image to an in-memory buffer
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0) # Rewind the buffer to the beginning
+
+    return buffer.getvalue()
 
 # --- Run the script ---
 if __name__ == "__main__":
