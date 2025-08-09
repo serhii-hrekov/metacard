@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "/metacard/main.py",
+      "src": "metacard/main.py",
       "use": "@vercel/python"
     }
   ],
@@ -11,5 +11,6 @@
       "src": "/(.*)",
       "dest": "metacard/main.py"
     }
-  ]
+  ],
+  "installCommand": "poetry install"
 }
