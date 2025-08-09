@@ -9,6 +9,12 @@ AUTHOR_NAME = "Serhii Hrekov" # Your name!
 AUTHOR_WEBSITE = "hrekov.com" # Your website URL
 BASE_DIR = Path(__file__).resolve().parent
 
+def load_font(path, size):
+    try:
+        return ImageFont.truetype(str(BASE_DIR / path), size)
+    except IOError:
+        print(f"Font {path} not found. Using default font.")
+        return ImageFont.load_default()
 
 try:
     TITLE_FONT = load_font("fonts/Poppins/Poppins-Bold.ttf", 60)
@@ -18,12 +24,7 @@ except IOError:
     print("Font file not found. Please download Poppins from Google Fonts.")
     
 
-def load_font(path, size):
-    try:
-        return ImageFont.truetype(str(BASE_DIR / path), size)
-    except IOError:
-        print(f"Font {path} not found. Using default font.")
-        return ImageFont.load_default()
+
 def generate_image(title: str):
     """
     Generates a social media thumbnail for a blog post.
