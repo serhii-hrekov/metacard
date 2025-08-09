@@ -1,12 +1,20 @@
 from PIL import Image, ImageDraw, ImageFont
 import io 
+from pathlib import Path
 # --- Configuration ---
 IMG_WIDTH = 1200
 IMG_HEIGHT = 630
 BG_COLOR = "#1a1a1a" # A dark background color
 AUTHOR_NAME = "Serhii Hrekov" # Your name!
 AUTHOR_WEBSITE = "hrekov.com" # Your website URL
+BASE_DIR = Path(__file__).resolve().parent
 
+def load_font(path, size):
+    try:
+        return ImageFont.truetype(str(BASE_DIR / path), size)
+    except IOError:
+        print(f"Font {path} not found. Using default font.")
+        return ImageFont.load_default()
 def generate_image(title: str):
     """
     Generates a social media thumbnail for a blog post.
@@ -18,10 +26,9 @@ def generate_image(title: str):
     # 2. Load fonts
     # Make sure you have these .ttf font files in the same directory
     try:
-        title_font = ImageFont.truetype("fonts/Poppins/Poppins-Bold.ttf", 60)
-        author_font = ImageFont.truetype("fonts/Poppins/Poppins-Regular.ttf", 40)
-        author_url_font = ImageFont.truetype("fonts/Poppins/Poppins-Regular.ttf", 20)
-
+        title_font = load_font("fonts/Poppins/Poppins-Bold.ttf", 60)
+        author_font = load_font("fonts/Poppins/Poppins-Regular.ttf", 40)
+        author_url_font = load_font("fonts/Poppins/Poppins-Regular.ttf", 20)
     except IOError:
         print("Font file not found. Please download Poppins from Google Fonts.")
         return
