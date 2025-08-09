@@ -31,7 +31,7 @@ async def generate_thumbnail_endpoint(
     if not title:
         raise HTTPException(status_code=400, detail="Title cannot be empty.")
     
-    if len(title) > 100:
+    if len(title) > 50:
         title = title[:97] + "..."
 
     # Generate the image data in memory
