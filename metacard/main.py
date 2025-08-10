@@ -53,3 +53,38 @@ async def root():
     with open("favicon.ico", "rb") as f:
         favicon_bytes = f.read()
     return StreamingResponse(io.BytesIO(favicon_bytes), media_type="image/x-icon")
+
+
+@app.get("/api/generate/{slug}.png")
+async def generate_thumbnail_endpoint(
+    slug: str,
+    title: str = Query(..., max_length=300, description="The title for the thumbnail image")
+):
+    """
+    API endpoint to generate a thumbnail image.
+    Slug is used for the image path, title is used for text in the thumbnail.
+    """
+
+    # Basic slug validation
+    if not re.match(r"^[a-z0-9-]+$", slug):
+        raise HTTPException(status_code=400, detail="Invalid slug format.")
+
+    # Sanitize and trim title
+    title = title.strip()
+    title = re.sub(r"[^\x20-\x7E]+", "", title)  # remove non-printable chars
+
+    if not title:
+        raise HTTPException(status_code=400, detail="Title cannot be empty.")
+
+    if len(title) > 100:
+        title = title[:97] + "..."
+
+    # Cache for 1 year
+    headers = {
+        "Cache-Control": "public, max-age=31536000, immutable"
+    }
+
+    # Generate the image data in memory
+    image_bytes = create_thumbnail.generate_image(title=title)
+
+    return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)
