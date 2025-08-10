@@ -14,7 +14,9 @@ app = FastAPI()
 
 @app.get("/api/generate")
 async def generate_thumbnail_endpoint(
-    title: str = Query("Hello from my API!", max_length=300, description="The title for the thumbnail image")
+    title: str = Query("Hello from my API!", max_length=300, description="The title for the thumbnail image"),
+    footer: bool = False,
+
 ):
     """
     API endpoint to generate a thumbnail image.
@@ -39,7 +41,7 @@ async def generate_thumbnail_endpoint(
     }
 
     # Generate the image data in memory
-    image_bytes = create_thumbnail.generate_image(title=title)
+    image_bytes = create_thumbnail.generate_image(title=title,footer=footer)
     
     # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)
@@ -48,11 +50,28 @@ async def generate_thumbnail_endpoint(
 @app.get("/")
 async def root():
     """
-    Root endpoint that returns the favicon.ico image.
+    Root endpoint to provide usage instructions.
+    Returns a simple usage example for the API.
     """
-    with open("favicon.ico", "rb") as f:
-        favicon_bytes = f.read()
-    return StreamingResponse(io.BytesIO(favicon_bytes), media_type="image/x-icon")
+    usage_example = """
+    Usage Example:
+
+    1. Generate a thumbnail image:
+        GET /api/generate?title=Your%20Title%20Here&footer=true
+
+    2. Generate a thumbnail with a slug:
+        GET /api/generate/your-slug.png?title=Your%20Title%20Here&footer=false
+
+    Parameters:
+    - title: The text for the thumbnail (max 300 chars).
+    - footer: true/false to include a footer.
+
+    Response:
+    - PNG image of the generated thumbnail.
+    """
+
+    return usage_example
+
 
 
 @app.get("/api/generate/{slug}.png")
