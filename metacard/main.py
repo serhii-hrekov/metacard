@@ -12,6 +12,24 @@ from . import create_thumbnail
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    """
+    Root endpoint to provide usage instructions.
+    Returns a simple usage example for the API in JSON format.
+    """
+    return {
+        "usage_example": [
+            "GET /api/generate?title=Your%20Title%20Here",
+            "GET /api/generate/your-slug.png?title=Your%20Title%20Here"
+        ],
+        "parameters": {
+            "title": "The text for the thumbnail (max 300 chars).",
+            "footer": "true/false to include a footer (only for admin)."
+        },
+        "response": "PNG image of the generated thumbnail."
+    }
+
 @app.get("/api/generate")
 async def generate_thumbnail_endpoint(
     title: str = Query("Hello from my API!", max_length=300, description="The title for the thumbnail image"),
@@ -47,35 +65,11 @@ async def generate_thumbnail_endpoint(
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)
 
 
-@app.get("/")
-async def root():
-    """
-    Root endpoint to provide usage instructions.
-    Returns a simple usage example for the API.
-    """
-    usage_example = """
-    Usage Example:
-
-    1. Generate a thumbnail image:
-        GET /api/generate?title=Your%20Title%20Here&footer=true
-
-    2. Generate a thumbnail with a slug:
-        GET /api/generate/your-slug.png?title=Your%20Title%20Here&footer=false
-
-    Parameters:
-    - title: The text for the thumbnail (max 300 chars).
-    - footer: true/false to include a footer.
-
-    Response:
-    - PNG image of the generated thumbnail.
-    """
-
-    return usage_example
 
 
 
 @app.get("/api/generate/{slug}.png")
-async def generate_thumbnail_endpoint(
+async def generate_thumbnail_endpoint_2(
     slug: str,
     title: str = Query(..., max_length=300, description="The title for the thumbnail image"),
     footer: bool = False,
