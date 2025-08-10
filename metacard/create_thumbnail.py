@@ -25,7 +25,7 @@ except IOError:
     
 
 
-def generate_image(title: str):
+def generate_image(title: str, footer: bool = False) -> bytes:
     """
     Generates a social media thumbnail for a blog post.
     """
@@ -63,12 +63,13 @@ def generate_image(title: str):
         draw.text((IMG_WIDTH / 2, current_y), line, font=TITLE_FONT, fill="#FFFFFF", anchor="ms")
         current_y += 70 # Move to the next line
 
-    # Draw author name
-    current_y += 20 # Add a little space before the author
-    draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=AUTHOR_FONT, fill="#cccccc", anchor="ms")
-    # Draw author domain
-    current_y += 40 # Add a little space before the author
-    draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=AUTHOR_URL_FONT, fill="#cccccc", anchor="ms")
+    if footer:
+        # Draw author name
+        current_y += 20 # Add a little space before the author
+        draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=AUTHOR_FONT, fill="#cccccc", anchor="ms")
+        # Draw author domain
+        current_y += 40 # Add a little space before the author
+        draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=AUTHOR_URL_FONT, fill="#cccccc", anchor="ms")
 
     # 5. Save the image
     # img.save(output_path)

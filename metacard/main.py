@@ -58,7 +58,9 @@ async def root():
 @app.get("/api/generate/{slug}.png")
 async def generate_thumbnail_endpoint(
     slug: str,
-    title: str = Query(..., max_length=300, description="The title for the thumbnail image")
+    title: str = Query(..., max_length=300, description="The title for the thumbnail image"),
+    footer: bool = False,
+
 ):
     """
     API endpoint to generate a thumbnail image.
@@ -85,6 +87,6 @@ async def generate_thumbnail_endpoint(
     }
 
     # Generate the image data in memory
-    image_bytes = create_thumbnail.generate_image(title=title)
+    image_bytes = create_thumbnail.generate_image(title=title,footer=footer)
 
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)
