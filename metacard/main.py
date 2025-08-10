@@ -34,11 +34,15 @@ async def generate_thumbnail_endpoint(
     if len(title) > 50:
         title = title[:97] + "..."
 
+    headers = {
+        "Cache-Control": "public, max-age=31536000, immutable"  # 1 year
+    }
+
     # Generate the image data in memory
     image_bytes = create_thumbnail.generate_image(title=title)
     
     # Return the image as a streaming response
-    return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png")
+    return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)
 
 
 @app.get("/")
