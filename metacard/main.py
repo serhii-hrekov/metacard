@@ -29,41 +29,136 @@ async def root():
         <title>Metacard API Documentation</title>
         <style>
             body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; color: #222; margin: 0; padding: 0; }
-            .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 32px; }
+            .container { max-width: 800px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 32px; }
             h1 { color: #2d7ff9; margin-bottom: 0.5em; }
             h2 { color: #444; margin-top: 2em; }
             code, pre { background: #f3f3f3; border-radius: 4px; padding: 2px 6px; font-size: 1em; }
             ul { margin: 1em 0; }
             .endpoint { font-weight: bold; color: #2d7ff9; }
             .footer { margin-top: 2em; font-size: 0.95em; color: #888; }
+            table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+            th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
+            th { background: #f3f3f3; }
         </style>
     </head>
     <body>
         <div class="container">
             <h1>Metacard API Documentation</h1>
-            <p>Generate beautiful PNG thumbnail images via HTTP API.</p>
+            <p>Generate beautiful PNG thumbnail images via HTTP API with customizable text and styling options.</p>
             <h2>Endpoints</h2>
             <ul>
                 <li>
                     <span class="endpoint">GET /api/generate</span><br>
-                    <code>?title=Your%20Title%20Here&amp;footer=false</code>
+                    <code>?title=Your%20Title%20Here&amp;footer=false&amp;backgroundColor=%231a1a1a&amp;fontSize=60&amp;fontColor=%23FFFFFF&amp;authorName=Serhii%20Hrekov&amp;authorFontColor=%23cccccc&amp;authorFontSize=40&amp;authorWebsite=hrekov.com&amp;authorWebsiteFontSize=20</code>
                 </li>
                 <li>
                     <span class="endpoint">GET /api/generate/&lt;slug&gt;.png</span><br>
                     <code>?title=Your%20Title%20Here&amp;footer=false</code>
                 </li>
             </ul>
-            <h2>Parameters</h2>
-            <ul>
-                <li><b>title</b> <code>(string, max 300 chars)</code>: The text for the thumbnail.</li>
-                <li><b>footer</b> <code>(boolean)</code>: <code>true</code> or <code>false</code> to include a footer (only for admin).</li>
-            </ul>
+            <h2>Parameters for <code>/api/generate</code></h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                </tr>
+                <tr>
+                    <td>title</td>
+                    <td>string (max 300 chars)</td>
+                    <td>The text for the thumbnail</td>
+                    <td>Hello from my API!</td>
+                </tr>
+                <tr>
+                    <td>footer</td>
+                    <td>boolean</td>
+                    <td>Include a footer in the thumbnail</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td>backgroundColor</td>
+                    <td>string (HEX)</td>
+                    <td>Background color in HEX format</td>
+                    <td>#1a1a1a</td>
+                </tr>
+                <tr>
+                    <td>fontSize</td>
+                    <td>integer (10-200)</td>
+                    <td>Font size for the title text</td>
+                    <td>60</td>
+                </tr>
+                <tr>
+                    <td>fontColor</td>
+                    <td>string (HEX)</td>
+                    <td>Font color in HEX format</td>
+                    <td>#FFFFFF</td>
+                </tr>
+                <tr>
+                    <td>authorName</td>
+                    <td>string (max 100 chars)</td>
+                    <td>Author name to display</td>
+                    <td>Serhii Hrekov</td>
+                </tr>
+                <tr>
+                    <td>authorFontColor</td>
+                    <td>string (HEX)</td>
+                    <td>Author font color in HEX format</td>
+                    <td>#cccccc</td>
+                </tr>
+                <tr>
+                    <td>authorFontSize</td>
+                    <td>integer (10-100)</td>
+                    <td>Author font size in points</td>
+                    <td>40</td>
+                </tr>
+                <tr>
+                    <td>authorWebsite</td>
+                    <td>string (max 50 chars)</td>
+                    <td>Author website URL to display</td>
+                    <td>hrekov.com</td>
+                </tr>
+                <tr>
+                    <td>authorWebsiteFontSize</td>
+                    <td>integer (10-100)</td>
+                    <td>Author website font size in points</td>
+                    <td>20</td>
+                </tr>
+            </table>
+            <h2>Parameters for <code>/api/generate/&lt;slug&gt;.png</code></h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                </tr>
+                <tr>
+                    <td>slug</td>
+                    <td>string</td>
+                    <td>Image path slug (lowercase letters, numbers, hyphens)</td>
+                    <td>Required</td>
+                </tr>
+                <tr>
+                    <td>title</td>
+                    <td>string (max 300 chars)</td>
+                    <td>The text for the thumbnail</td>
+                    <td>Required</td>
+                </tr>
+                <tr>
+                    <td>footer</td>
+                    <td>boolean</td>
+                    <td>Include a footer in the thumbnail</td>
+                    <td>false</td>
+                </tr>
+            </table>
             <h2>Response</h2>
             <ul>
                 <li>Returns a <b>PNG image</b> of the generated thumbnail.</li>
+                <li>Response headers include <code>Cache-Control: public, max-age=31536000, immutable</code> for caching.</li>
             </ul>
             <h2>Example Usage</h2>
-            <pre>GET /api/generate?title=Hello%20World</pre>
+            <pre>GET /api/generate?title=Hello%20World&amp;backgroundColor=%231a1a1a&amp;fontSize=60</pre>
             <pre>GET /api/generate/my-slug.png?title=Hello%20World</pre>
             <div class="footer">
                 &copy; 2024 Metacard API. Powered by FastAPI.
