@@ -1,4 +1,6 @@
 # In main.py
+# to run this shit: 
+# poetry run uvicorn metacard.main:app --reload
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from fastapi.exceptions import HTTPException
@@ -9,26 +11,68 @@ from fastapi import Query
 
 # Import our generator function from the other file
 from . import create_thumbnail
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
     """
     Root endpoint to provide usage instructions.
-    Returns a simple usage example for the API in JSON format.
+    Returns a beautiful HTML documentation page for the API.
     """
-    return {
-        "usage_example": [
-            "GET /api/generate?title=Your%20Title%20Here",
-            "GET /api/generate/your-slug.png?title=Your%20Title%20Here"
-        ],
-        "parameters": {
-            "title": "The text for the thumbnail (max 300 chars).",
-            "footer": "true/false to include a footer (only for admin)."
-        },
-        "response": "PNG image of the generated thumbnail."
-    }
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Metacard API Documentation</title>
+        <style>
+            body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; color: #222; margin: 0; padding: 0; }
+            .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 32px; }
+            h1 { color: #2d7ff9; margin-bottom: 0.5em; }
+            h2 { color: #444; margin-top: 2em; }
+            code, pre { background: #f3f3f3; border-radius: 4px; padding: 2px 6px; font-size: 1em; }
+            ul { margin: 1em 0; }
+            .endpoint { font-weight: bold; color: #2d7ff9; }
+            .footer { margin-top: 2em; font-size: 0.95em; color: #888; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Metacard API Documentation</h1>
+            <p>Generate beautiful PNG thumbnail images via HTTP API.</p>
+            <h2>Endpoints</h2>
+            <ul>
+                <li>
+                    <span class="endpoint">GET /api/generate</span><br>
+                    <code>?title=Your%20Title%20Here&amp;footer=false</code>
+                </li>
+                <li>
+                    <span class="endpoint">GET /api/generate/&lt;slug&gt;.png</span><br>
+                    <code>?title=Your%20Title%20Here&amp;footer=false</code>
+                </li>
+            </ul>
+            <h2>Parameters</h2>
+            <ul>
+                <li><b>title</b> <code>(string, max 300 chars)</code>: The text for the thumbnail.</li>
+                <li><b>footer</b> <code>(boolean)</code>: <code>true</code> or <code>false</code> to include a footer (only for admin).</li>
+            </ul>
+            <h2>Response</h2>
+            <ul>
+                <li>Returns a <b>PNG image</b> of the generated thumbnail.</li>
+            </ul>
+            <h2>Example Usage</h2>
+            <pre>GET /api/generate?title=Hello%20World</pre>
+            <pre>GET /api/generate/my-slug.png?title=Hello%20World</pre>
+            <div class="footer">
+                &copy; 2024 Metacard API. Powered by FastAPI.
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 @app.get("/api/generate")
 async def generate_thumbnail_endpoint(
