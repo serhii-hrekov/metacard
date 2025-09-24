@@ -76,13 +76,36 @@ async def root():
 
 @app.get("/api/generate")
 async def generate_thumbnail_endpoint(
+    
     title: str = Query("Hello from my API!", max_length=300, description="The title for the thumbnail image"),
     footer: bool = False,
-
+    backgroundColor: str = Query("#1a1a1a", description="Background color in HEX format", max_length=7),
+    fontSize: int = Query(60, ge=10, le=200, description="Font size in points"),
+    fontColor: str = Query("#FFFFFF", description="Font color in HEX format", max_length=7),
+    authorName: str = Query("Serhii Hrekov", description="Author name", max_length=100),
+     authorFontColor: str = Query("#cccccc", description="Author font color in HEX format", max_length=7),
+    authorFontSize: int = Query(40, ge=10, le=100, description="Author font size in points"),
+    authorWebsite: str = Query("hrekov.com", description="Author website URL", max_length=50),
+    authorWebsiteFontSize: int = Query(20, ge=10, le=100, description="Author website font size in points"),
+   
 ):
     """
-    API endpoint to generate a thumbnail image.
-    Takes a 'title' query parameter.
+   Endpoint to generate a thumbnail image with customizable text and styling options.
+    Args:
+        title (str): The title for the thumbnail image. Default is "Hello from my API!". Maximum length is 300 characters.
+        footer (bool): Whether to include a footer in the thumbnail. Default is False.
+        backgroundColor (str): Background color in HEX format. Default is "#1a1a1a". Maximum length is 7 characters.
+        fontSize (int): Font size for the title text in points. Default is 60. Range is 10 to 200.
+        fontColor (str): Font color in HEX format. Default is "#FFFFFF". Maximum length is 7 characters.
+        authorName (str): Author name to display. Default is "Serhii Hrekov". Maximum length is 100 characters.
+        authorFontColor (str): Author font color in HEX format. Default is "#cccccc". Maximum length is 7 characters.
+        authorFontSize (int): Author font size in points. Default is 40. Range is 10 to 100.
+        authorWebsite (str): Author website URL to display. Default is "hrekov.com". Maximum length is 50 characters.
+        authorWebsiteFontSize (int): Author website font size in points. Default is 20. Range is 10 to 100.
+    Returns:
+        StreamingResponse: PNG image of the generated thumbnail with the specified parameters.
+    Raises:
+        HTTPException: If the title is empty after sanitization.
     """
 
     # Strip leading/trailing spaces
@@ -103,7 +126,18 @@ async def generate_thumbnail_endpoint(
     }
 
     # Generate the image data in memory
-    image_bytes = create_thumbnail.generate_image(title=title,footer=footer)
+    image_bytes = create_thumbnail.generate_image(
+        title=title,
+        footer=footer,
+        backgroundColor=backgroundColor,
+        fontSize=fontSize,
+        fontColor=fontColor,
+        authorName=authorName,
+        authorWebsite=authorWebsite,
+        authorFontColor=authorFontColor,
+        authorFontSize=authorFontSize,
+        authorWebsiteFontSize=authorWebsiteFontSize,
+        )
     
     # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(image_bytes), media_type="image/png", headers=headers)

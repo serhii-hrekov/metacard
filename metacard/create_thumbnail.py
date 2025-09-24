@@ -1,46 +1,49 @@
 from PIL import Image, ImageDraw, ImageFont
 import io 
 from pathlib import Path
-# --- Configuration ---
-IMG_WIDTH = 1200
-IMG_HEIGHT = 630
-BG_COLOR = "#1a1a1a" # A dark background color
-AUTHOR_NAME = "Serhii Hrekov" # Your name!
-AUTHOR_WEBSITE = "hrekov.com" # Your website URL
-BASE_DIR = Path(__file__).resolve().parent
+from . import constants
 
-def load_font(path, size):
-    try:
-        return ImageFont.truetype(str(BASE_DIR / path), size)
-    except IOError:
-        print(f"Font {path} not found. Using default font.")
-        return ImageFont.load_default()
 
-try:
-    TITLE_FONT = load_font("fonts/Poppins/Poppins-Bold.ttf", 60)
-    AUTHOR_FONT = load_font("fonts/Poppins/Poppins-Regular.ttf", 40)
-    AUTHOR_URL_FONT = load_font("fonts/Poppins/Poppins-Regular.ttf", 20)
-except IOError:
-    print("Font file not found. Please download Poppins from Google Fonts.")
     
 
 
-def generate_image(title: str, footer: bool = False) -> bytes:
+def generate_image(
+        title: str,
+        footer: bool = False,
+        backgroundColor: str = constants.BG_COLOR,
+        fontSize: int = constants.FONT_SIZE,
+        fontColor: str = constants.FONT_COLOR,
+        authorFontColor: str = constants.AUTHOR_FORNT_COLOR,
+        authorName: str = constants.AUTHOR_NAME,
+        authorWebsite: str = constants.AUTHOR_WEBSITE,
+        authorFontSize: int = 40,
+        authorWebsiteFontSize: int = 20,
+          ) -> bytes:
     """
-    Generates a social media thumbnail for a blog post.
+    Generates a social media thumbnail image for a blog post with a customizable title, background color, font styles, and optional footer containing author information.
+        Args:
+            title (str): The main text to display as the thumbnail's title.
+            footer (bool, optional): Whether to include author information at the bottom of the image. Defaults to False.
+            backgroundColor (str, optional): Background color of the image. Defaults to constants.BG_COLOR.
+            fontSize (int, optional): Font size for the title text. Defaults to constants.FONT_SIZE.
+            fontColor (str, optional): Color of the title text. Defaults to constants.FONT_COLOR.
+            authorFontColor (str, optional): Color of the author information text. Defaults to constants.AUTHOR_FORNT_COLOR.
+            authorName (str, optional): Name of the author to display in the footer. Defaults to constants.AUTHOR_NAME.
+            authorWebsite (str, optional): Website of the author to display in the footer. Defaults to constants.AUTHOR_WEBSITE.
+            authorFontSize (int, optional): Font size for the author name. Defaults to 40.
+            authorWebsiteFontSize (int, optional): Font size for the author website. Defaults to 20.
+        Returns:
+            bytes: The generated thumbnail image in PNG format as a bytes object.
     """
     # 1. Create a blank image
-    img = Image.new('RGB', (IMG_WIDTH, IMG_HEIGHT), color=BG_COLOR)
+    img = Image.new('RGB', (constants.IMG_WIDTH, constants.IMG_HEIGHT), color=backgroundColor)
     draw = ImageDraw.Draw(img)
-
-    # 2. Load fonts
-    # Make sure you have these .ttf font files in the same directory
 
 
     # 3. Simple text wrapping for the title
     # This is a basic implementation to handle longer titles
-    char_width_avg = 35 # Average character width, adjust as needed
-    max_chars_per_line = IMG_WIDTH // char_width_avg
+
+    max_chars_per_line = constants.IMG_WIDTH // constants.CHAR_WIDTH_AVG
     
     lines = []
     words = title.split()
@@ -56,20 +59,20 @@ def generate_image(title: str, footer: bool = False) -> bytes:
     # 4. Draw the text on the image
     # Calculate starting Y position to center the block of text
     total_text_height = (len(lines) * 70) + 50 # (num_lines * line_height) + space for author
-    current_y = (IMG_HEIGHT - total_text_height) / 2
+    current_y = (constants.IMG_HEIGHT - total_text_height) / 2
 
     # Draw title lines
     for line in lines:
-        draw.text((IMG_WIDTH / 2, current_y), line, font=TITLE_FONT, fill="#FFFFFF", anchor="ms")
+        draw.text((constants.IMG_WIDTH / 2, current_y), line, font=constants.load_font("fonts/Poppins/Poppins-Bold.ttf", fontSize), fill=fontColor, anchor="ms")
         current_y += 70 # Move to the next line
 
     if footer:
         # Draw author name
         current_y += 20 # Add a little space before the author
-        draw.text((IMG_WIDTH / 2, current_y), f"By {AUTHOR_NAME}", font=AUTHOR_FONT, fill="#cccccc", anchor="ms")
+        draw.text((constants.IMG_WIDTH / 2, current_y), f"By {authorName}", font=constants.load_font("fonts/Poppins/Poppins-Regular.ttf", authorFontSize), fill=authorFontColor, anchor="ms")
         # Draw author domain
         current_y += 40 # Add a little space before the author
-        draw.text((IMG_WIDTH / 2, current_y), f"{AUTHOR_WEBSITE}", font=AUTHOR_URL_FONT, fill="#cccccc", anchor="ms")
+        draw.text((constants.IMG_WIDTH / 2, current_y), f"{authorWebsite}", font=constants.load_font("fonts/Poppins/Poppins-Regular.ttf", authorWebsiteFontSize), fill=authorFontColor, anchor="ms")
 
     # 5. Save the image
     # img.save(output_path)
